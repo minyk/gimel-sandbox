@@ -1,0 +1,26 @@
+version: '2'
+services:
+  mysql-standalone:
+    image: percona:5.7
+    ports:
+      - 3306:3306
+    volumes:
+      - ./udc_ddl.sql:/docker-entrypoint-initdb.d/udc_ddl.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: udc
+      MYSQL_USER: udcadmin
+      MYSQL_PASSWORD: Udc@123
+  udc-service:
+    image: minyk/gimel-udc-serv:dev
+    ports:
+      - 8801:8080
+    depends_on:
+      - mysql-standalone
+  udc-ui:
+    image: minyk/gimel-udc-web:dev
+    ports:
+      - 8800:80
+    depends_on:
+      - mysql-standalone
+      - udc-service
